@@ -75,7 +75,7 @@ class Index extends React.Component {
             <Col span={15}>
 
               {!this.state.loading && (
-                <Title>Velow CIPA</Title>
+                <Title>CIPA</Title>
               )}
 
               {this.state.loading && (
