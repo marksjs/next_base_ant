@@ -3,32 +3,32 @@ import axios from 'axios';
 import { Cookies } from 'react-cookie';
 import { handleAuthSSR } from '../utils/auth';
 
+import {PageLoader} from '../components/PageLoader';
+
 const serverUrl = 'http://cipa.velow.com.br';
 
 // set up cookies
 const cookies = new Cookies();
 
-class Secret extends React.Component {
+class Admins extends React.Component {
 
-  onPingCall = async (e) => {
-    const token = cookies.get('token');
-
-    try {
-      const res = await axios.get(serverUrl + '/api/ping', { headers: { 'Authorization': token } });
-      console.log(res.data.msg);
-    } catch (err) {
-      console.log(err.response.data.msg);
-    }
+  constructor(){
+    super();
+    this.state = {pageLoading: true}
   }
+
+  componentDidMount(){
+    this.setState({pageLoading: false});
+  }
+
 
   render() {
     return (
-      <div>
-        <h2>Secret page</h2>
-        <p>Only accessible via a valid JWT</p>
-        <br></br>
-        <button onClick={(e) => this.onPingCall(e)}>Ping Call</button>
-        <p>Check console for response</p>
+      <div id="main">
+        {this.state.pageLoading ? <PageLoader/> : ""}
+        <div>
+          Login realizado com sucesso
+        </div>
       </div>
     );
   }
@@ -46,4 +46,4 @@ class Secret extends React.Component {
 //   return {}
 // }
 
-export default Secret;
+export default Admins;
