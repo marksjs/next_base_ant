@@ -87,21 +87,24 @@ class Index extends React.Component {
       width: '100%'
     };
 
-    const loginBackground = {
-      background: "url('/static/images/login_background.png') no-repeat center",
-      height: '100%',
-      objectFit: 'cover'
-    };
+    // const loginBackgroundImg = {
+    //   background: "url('/static/images/login_background.png') no-repeat center",
+    //   height: '100%',
+    //   objectFit: 'cover'
+    // };
+
 
     return (
       <div id="main">
         {this.state.pageLoading ? <PageLoader/> : ""}
 
         <Row type="flex" style={divLogin}>
-          <Col style={loginBackground} span={12}>
+          <Col xs={{ span: 24}} lg={{ span: 13}}>
+            <div style={{backgroundColor: "#424242",  height: '100%'}}></div>
           </Col>
-          <Col span={12}>
-            <Row type="flex" style={{height: '100%', marginRight: '20%'}} align="middle" justify="end">
+
+          <Col xs={{ span: 24}} lg={{ span: 11}} >
+            <Row type="flex" style={{height: '100%', marginLeft: '10%'}} align="middle" justify="center">
               <Col span={15}>
 
                 {!this.state.loading && (
@@ -147,10 +150,11 @@ class Index extends React.Component {
                 )}
               </Col>
             </Row>
-
           </Col>
         </Row>
-      </div>    );
+      </div>
+
+    );
   }
 }
 export default Form.create()(Index);
