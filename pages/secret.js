@@ -35,15 +35,15 @@ class Secret extends React.Component {
 }
 
 // Server-Side Rendering
-// Secret.getInitialProps = async (ctx) => {
-//   // Must validate JWT
-//   // If the JWT is invalid it must redirect
-//   // back to the main page. You can do that
-//   // with Router from 'next/router
-//   await handleAuthSSR(ctx);
-//
-//   // Must return an object
-//   return {}
-// }
+Secret.getInitialProps = async (ctx) => {
+  // Must validate JWT
+  // If the JWT is invalid it must redirect
+  // back to the main page. You can do that
+  // with Router from 'next/router
+  await handleAuthSSR(ctx);
+
+  // Must return an object
+  return {}
+};
 
 export default Secret;

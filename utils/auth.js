@@ -3,7 +3,7 @@ import Router from 'next/router';
 import { Cookies } from 'react-cookie';
 // set up cookies
 const cookies = new Cookies();
-const serverUrl = 'http://cipa.velow.com.br';
+import {apiUrl} from "../config/ApiConfig";
 
 export async function handleAuthSSR(ctx) {
   let token = null;
@@ -20,7 +20,7 @@ export async function handleAuthSSR(ctx) {
   }
 
   try {
-    const response = await axios.get(serverUrl + "/api/token/ping", { headers: { 'Authorization': token } });
+    const response = await axios.get(apiUrl + "/api/token/ping", { headers: { 'Authorization': token } });
     // dont really care about response, as long as it not an error
     console.log("token ping:", response.data.msg)
   } catch (err) {
@@ -30,11 +30,11 @@ export async function handleAuthSSR(ctx) {
     // redirect to login
     if (ctx.res) {
       ctx.res.writeHead(302, {
-        Location: '/'
+        Location: '/login'
       })
       ctx.res.end()
     } else {
-      Router.push('/')
+      Router.push('/login')
     }
   }
 }
