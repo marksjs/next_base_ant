@@ -6,7 +6,6 @@ import {combineReducers} from "redux";
 const rootReducer = (state = {email: '', password: '', loading: false}, action) => {
   switch (action.type) {
     case 'PROFILE':
-      debugger
       return {...state, profile: action.profile};
     case 'ERROR':
       return {loading: false};
