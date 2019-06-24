@@ -1,15 +1,13 @@
 //TODO animações, melhora no submit de formulario (dados em branco) e tradução
 
 import React from 'react';
-import ReactDom from 'react-dom'
-import axios from 'axios';
+import LoginApi from '../api/LoginApi';
 import { Cookies } from 'react-cookie';
-import Swal from 'sweetalert2'
-import Router from 'next/router';
+import {connect} from 'react-redux';
 import 'antd/dist/antd.css';
+import Router from 'next/router';
 import {PageLoader} from '../components/PageLoader';
-import { Form, Icon, Input, Button, Checkbox, Row, Col, Spin, Typography } from 'antd';
-import {apiUrl} from "../config/ApiConfig";
+import { Form, Icon, Input, Button, Row, Col, Spin, Typography } from 'antd';
 
 
 // set up cookies
@@ -17,58 +15,24 @@ const cookies = new Cookies();
 const { Title } = Typography;
 class LoginForm extends React.Component {
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       token: cookies.get('token') || null,
       user: null,
       password: null,
-      loading: false,
       pageLoading: true
-    };
-
-    this.emmitToastMessage = (type, messages) => {
-
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-start',
-        showConfirmButton: false,
-        timer: 3000
-      });
-
-      Toast.fire({
-        type: type,
-        title: messages.join('\n *')
-      })
     };
   }
 
   loginClick = async (e) => {
     e.preventDefault();
 
-    let body = {};
-    this.state.loading = true;
     this.props.form.validateFields((err, obj) => {
       if (!err) {
-        body.email = obj.email;
-        body.password = obj.password;
+        this.props.login(obj.email, obj.password);
       }
     });
-
-    await axios.post(apiUrl + '/auth/sign_in',  body).then((resp) => {
-      cookies.set('token', resp.headers["access-token"]);
-      this.setState({
-        token: resp.headers["access-token"]
-      });
-
-      this.setState({loading: false});
-      // this.emmitToastMessage('success', ['Usuário logado com sucesso']);
-      Router.push('/admins')
-    }).catch((reject) => {
-      this.setState({loading: false});
-      this.emmitToastMessage('error', reject.response.data.errors);
-    });
-
   };
 
   componentDidMount(){
@@ -104,18 +68,18 @@ class LoginForm extends React.Component {
             <Row type="flex" style={{height: '100%', marginLeft: '10%'}} align="middle" justify="center">
               <Col span={15}>
 
-                {!this.state.loading && (
+                {!this.props.loading && (
                   <Title>TITLE LOREM IPSUM</Title>
                 )}
 
-                {this.state.loading && (
+                {this.props.loading && (
                   <Row type="flex" align="middle" justify="center">
                     <Spin size="large" className="login-form"
                           tip="Carregando..."></Spin>
                   </Row>
                 )}
 
-                {!this.state.loading && (
+                {!this.props.loading && (
                   <Form onSubmit={this.loginClick} className="login-form">
                     <Form.Item>
                       {getFieldDecorator('email', {
@@ -154,4 +118,22 @@ class LoginForm extends React.Component {
   }
 }
 
-export default Form.create({name: 'login'})(LoginForm);
+const mapStateToProps = state => {
+  if(state.profile){
+    Router.push('/admins')
+  } else {
+    return {loading: state.loading}
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login : (mail, password) => {
+      dispatch(LoginApi.login(mail, password));
+    }
+  }
+};
+
+const LoginFormContainer = connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+
+export default Form.create({name: 'login'})(LoginFormContainer);
