@@ -35,6 +35,16 @@ class LoginForm extends React.Component {
     });
   };
 
+  componentDidUpdate(prevProps) {
+    if(this.props.profile && this.props.profile.id && cookies.get('token')){
+
+      Router.push('/dashboard');
+    }
+    else {
+      Router.push('/login');
+    }
+  }
+
   componentDidMount(){
     this.setState({pageLoading: false});
   }
@@ -119,11 +129,7 @@ class LoginForm extends React.Component {
 }
 
 const mapStateToProps = state => {
-  if(state.profile){
-    Router.push('/admins')
-  } else {
-    return {loading: state.loading}
-  }
+  return {loading: state.loading, profile: state.profile}
 };
 
 const mapDispatchToProps = dispatch => {

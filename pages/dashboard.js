@@ -6,7 +6,7 @@ import {PageLoader} from '../components/PageLoader';
 // set up cookies
 const cookies = new Cookies();
 
-class Admins extends React.Component {
+class Dashboard extends React.Component {
 
   constructor(){
     super();
@@ -30,8 +30,8 @@ class Admins extends React.Component {
   }
 }
 
-//
-//Admins.getInitialProps = async (ctx) => {
+
+// Admins.getInitialProps = async (ctx) => {
 //   // Must validate JWT
 //   // If the JWT is invalid it must redirect
 //   // back to the main page. You can do that
@@ -41,4 +41,4 @@ class Admins extends React.Component {
 //   // Must return an object
 //   return {}
 // }
-export default Admins;
+export default Dashboard;

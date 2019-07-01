@@ -22,9 +22,9 @@ export default class LoginApi{
 
       axios.post(apiUrl + '/auth/sign_in',  body).then((resp) => {
         cookies.set('token', resp.headers["access-token"]);
-        // this.setState({
-        //   token: resp.headers["access-token"]
-        // });
+        cookies.set('email', resp.data.data.email);
+        cookies.set('profile', JSON.stringify(resp.data.data));
+
         return resp.data;
       }).then(profile => {
         dispatch(logged(profile.data));

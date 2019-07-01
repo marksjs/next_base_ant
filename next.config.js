@@ -1,18 +1,28 @@
-const withCSS = require('@zeit/next-css');
-const withSass = require('@zeit/next-sass');
-const withLess = require('@zeit/next-less');
+/* eslint-disable */
+const withCss = require('@zeit/next-css')
 
+module.exports = withCss({
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      const antStyles = /antd\/.*?\/style\/css.*?/
+      const origExternals = [...config.externals]
+      config.externals = [
+        (context, request, callback) => {
+          if (request.match(antStyles)) return callback()
+          if (typeof origExternals[0] === 'function') {
+            origExternals[0](context, request, callback)
+          } else {
+            callback()
+          }
+        },
+        ...(typeof origExternals[0] === 'function' ? [] : origExternals),
+      ]
 
-// fix: prevents error when .less files are required by node
-if (typeof require !== 'undefined') {
-  require.extensions['.less'] = file => { }
-}
-
-module.exports = withLess(withSass(withCSS({
-  lessLoaderOptions: {
-    javascriptEnabled: true
+      config.module.rules.unshift({
+        test: antStyles,
+        use: 'null-loader',
+      })
+    }
+    return config
   },
-  cssLoaderOptions: {
-    url: true
-  }
-})));
+});

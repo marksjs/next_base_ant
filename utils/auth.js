@@ -31,7 +31,7 @@ export async function handleAuthSSR(ctx) {
     if (ctx.res) {
       ctx.res.writeHead(302, {
         Location: '/login'
-      })
+      });
       ctx.res.end()
     } else {
       Router.push('/login')
