@@ -1,40 +1,120 @@
 import axios from 'axios';
+import { Component } from 'react';
 import Router from 'next/router';
-import { Cookies } from 'react-cookie';
-// set up cookies
-const cookies = new Cookies();
+import nextCookie from 'next-cookies';
+import cookie from 'js-cookie';
 import {apiUrl} from "../config/ApiConfig";
 
-export async function handleAuthSSR(ctx) {
-  let token = null;
+export const login = async (header) => {
+  cookie.set('token', header.token);
+  cookie.set('uid', header.uid);
+  cookie.set('client', header.client);
+  Router.push('/dashboard')
+}
 
-  // if context has request info aka Server Side
-  if (ctx.req) {
-    // ugly way to get cookie value from a string of values
-    // good enough for demostration
-    token = ctx.req.headers.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-  }
-  else {
-    // we dont have request info aka Client Side
-    token = cookies.get('token')
-  }
+export const getLoginInfo = () =>{
+  return {"token": cookie.get('token'), "uid": cookie.get('uid'), "client": cookie.get('client')}
+};
 
-  try {
-    const response = await axios.get(apiUrl + "/api/token/ping", { headers: { 'Authorization': token } });
-    // dont really care about response, as long as it not an error
-    console.log("token ping:", response.data.msg)
-  } catch (err) {
-    // in case of error
-    console.log(err.response.data.msg);
-    console.log("redirecting back to main page");
-    // redirect to login
-    if (ctx.res) {
-      ctx.res.writeHead(302, {
-        Location: '/login'
-      });
-      ctx.res.end()
-    } else {
-      Router.push('/login')
+export const logout = () => {
+  cookie.remove('token');
+  cookie.remove('uid');
+  cookie.remove('client');
+  // to support logging out from all windows
+  window.localStorage.setItem('logout', Date.now());
+  Router.push('/login')
+}
+
+// Gets the display name of a JSX component for dev tools
+const getDisplayName = Component =>
+  Component.displayName || Component.name || 'Component'
+
+export const withAuthSync = WrappedComponent =>
+  class extends Component {
+    static displayName = `withAuthSync(${getDisplayName(WrappedComponent)})`
+
+    static async getInitialProps (ctx) {
+      const headers = auth(ctx);
+
+      console.log("headers: "+JSON.stringify(headers));
+
+      try {
+        const request = await axios.get(apiUrl + "/admins", { headers: headers});
+
+        const componentProps =
+          WrappedComponent.getInitialProps &&
+          (await WrappedComponent.getInitialProps(ctx))
+
+        return { ...componentProps, headers }
+      } catch(e){
+
+        return dispatch => {
+          if (ctx.res) {
+            ctx.res.writeHead(302, {
+              Location: '/login'
+            });
+            ctx.res.end()
+          } else {
+            Router.push('/login')
+          }
+        }
+
+      }
+    }
+
+    constructor (props) {
+      super(props)
+
+      this.syncLogout = this.syncLogout.bind(this)
+    }
+
+    componentDidMount () {
+      window.addEventListener('storage', this.syncLogout)
+    }
+
+    componentWillUnmount () {
+      window.removeEventListener('storage', this.syncLogout)
+      window.localStorage.removeItem('logout')
+    }
+
+    syncLogout (event) {
+      if (event.key === 'logout') {
+        console.log('logged out from storage!')
+        Router.push('/login')
+      }
+    }
+
+    render () {
+      return <WrappedComponent {...this.props} />
     }
   }
+
+export const auth = ctx => {
+  const { token } = nextCookie(ctx);
+  const { uid } = nextCookie(ctx);
+  const { client } = nextCookie(ctx);
+  const headers = {
+    "access-token": token,
+    "uid": uid,
+    "client": client
+  };
+
+  /*
+   * This happens on server only, ctx.req is available means it's being
+   * rendered on server. If we are on server and token is not available,
+   * means user is not logged in.
+   */
+  if (ctx.req && (!token || !uid || !client)) {
+    ctx.res.writeHead(302, { Location: '/login' })
+    ctx.res.end();
+
+    return
+  }
+
+  // We already checked for server. This should only happen on client.
+  if (!token || !uid || !client) {
+    Router.push('/login')
+  }
+
+  return {"access-token": token, "uid": uid, "client": client}
 }

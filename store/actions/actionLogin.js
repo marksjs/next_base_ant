@@ -6,6 +6,7 @@ export function logged(profile){
   return {type:'PROFILE',profile};
 }
 
-export function loginError(){
-  return {type:'ERROR'};
+export function loginError(msg){
+  debugger
+  return {type:'ERROR', msg};
 }

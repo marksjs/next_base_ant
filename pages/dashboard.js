@@ -1,15 +1,12 @@
 import React from 'react';
-import { Cookies } from 'react-cookie';
-import { handleAuthSSR } from '../utils/auth';
 import {PageLoader} from '../components/PageLoader';
-
-// set up cookies
-const cookies = new Cookies();
+import { withAuthSync } from '../utils/auth';
+import {ProfileOptions} from '../components/ProfileOptions';
 
 class Dashboard extends React.Component {
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {pageLoading: true}
   }
 
@@ -17,21 +14,18 @@ class Dashboard extends React.Component {
     this.setState({pageLoading: false});
   }
 
-
   render() {
     return (
       <div id="main">
         {this.state.pageLoading ? <PageLoader/> : ""}
-        <div>
-          Login realizado com sucesso
-        </div>
+        <ProfileOptions/>
       </div>
     );
   }
 }
 
 
-// Admins.getInitialProps = async (ctx) => {
+// Dashboard.getInitialProps = async (ctx) => {
 //   // Must validate JWT
 //   // If the JWT is invalid it must redirect
 //   // back to the main page. You can do that
@@ -40,5 +34,5 @@ class Dashboard extends React.Component {
 //
 //   // Must return an object
 //   return {}
-// }
-export default Dashboard;
+// };
+export default withAuthSync(Dashboard);
