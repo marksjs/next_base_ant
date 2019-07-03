@@ -7,6 +7,5 @@ export function logged(profile){
 }
 
 export function loginError(msg){
-  debugger
   return {type:'ERROR', msg};
 }
