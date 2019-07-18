@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import 'antd/dist/antd.css';
 import { Button, Typography } from 'antd';
 import { logout, getLoginInfo } from '../utils/auth';
+import Router from "next/router";
 
 const { Title } = Typography;
 
@@ -13,7 +14,7 @@ export class ProfileOptions extends Component {
   }
 
   logoutClick = async (e) => {
-    logout();
+    Router.push('/logout');
   };
 
   render() {

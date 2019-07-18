@@ -1,8 +1,7 @@
 import React from 'react';
-import LoginForm from '../components/LoginForm'
-import { connect } from "react-redux";
+import LoginForm from '../components/Login/LoginForm'
 
-class Login extends React.Component{
+export default class Login extends React.Component{
   render(){
     return (
       <div>
@@ -11,5 +10,3 @@ class Login extends React.Component{
     );
   }
 }
-
-export default connect()(Login);

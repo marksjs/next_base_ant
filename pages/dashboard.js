@@ -1,5 +1,5 @@
 import React from 'react';
-import {PageLoader} from '../components/PageLoader';
+import {PageLoader} from '../components/Loading/PageLoader';
 import { withAuthSync } from '../utils/auth';
 import {ProfileOptions} from '../components/ProfileOptions';
 

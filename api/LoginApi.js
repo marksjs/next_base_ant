@@ -1,15 +1,14 @@
-import {logged, loginError, doAuth} from "../store/actions/actionLogin";
+import {logged, loginError, doAuth, logout} from "../store/actions/actionLogin";
 import 'isomorphic-fetch';
 import axios from "axios/index";
 import { Flash } from '../components/Flash';
 import {apiUrl} from "../config/ApiConfig";
 import { Cookies } from 'react-cookie';
-import { login } from '../utils/auth'
+import { login, getLoginInfo } from '../utils/auth'
+import Router from "next/router";
 
 const cookies = new Cookies();
 export default class LoginApi{
-
-
 
   static login(email, password){
     const body = {
@@ -19,7 +18,7 @@ export default class LoginApi{
 
     return dispatch => {
 
-      dispatch(doAuth());
+      dispatch(doAuth(body));
 
       axios.post(apiUrl + '/auth/sign_in',  body).then((resp) => {
         // cookies.set('token', resp.headers["access-token"]);
@@ -39,10 +38,25 @@ export default class LoginApi{
       }).then(profile => {
         dispatch(logged(profile.data));
       }).catch(reject => {
-        dispatch(loginError());
+        dispatch(loginError(body));
         Flash.create('error', reject.response.data.errors);
       });
     }
-  }
+  };
 
+  static logout(){
+    const headers = getLoginInfo();
+
+    axios.post(apiUrl + '/auth/sign_out',  {headers: headers}).then((resp) => {
+//        dispatch(logout({}));
+
+      cookies.remove('token');
+      cookies.remove('uid');
+      cookies.remove('client');
+
+      Router.push('/login');
+    }).catch(reject => {
+      Flash.create('error', reject.response.data.errors);
+    });
+  }
 }

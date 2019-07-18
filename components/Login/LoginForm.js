@@ -1,13 +1,14 @@
 //TODO animações, melhora no submit de formulario (dados em branco) e tradução
 
 import React from 'react';
-import LoginApi from '../api/LoginApi';
+import LoginApi from '../../api/LoginApi';
 import { Cookies } from 'react-cookie';
 import {connect} from 'react-redux';
 import 'antd/dist/antd.css';
 import Router from 'next/router';
-import {PageLoader} from '../components/PageLoader';
+import {ContainerLoader} from '../Loading/ContainerLoader';
 import { Form, Icon, Input, Button, Row, Col, Spin, Typography } from 'antd';
+import {loginDone} from "../../store/actions/actionLogin";
 
 
 // set up cookies
@@ -19,8 +20,8 @@ class LoginForm extends React.Component {
     super();
     this.state = {
       token: cookies.get('token') || null,
-      user: null,
-      password: null,
+      email: "",
+      password: "",
       pageLoading: true
     };
   }
@@ -30,6 +31,7 @@ class LoginForm extends React.Component {
 
     this.props.form.validateFields((err, obj) => {
       if (!err) {
+        this.setState({email: obj.email, password: obj.password});
         this.props.login(obj.email, obj.password);
       }
     });
@@ -37,16 +39,16 @@ class LoginForm extends React.Component {
 
   componentDidUpdate(prevProps) {
     if(this.props.profile && this.props.profile.id && cookies.get('token')){
-
       Router.push('/dashboard');
-    }
-    else {
+    } else {
       Router.push('/login');
     }
   }
 
   componentDidMount(){
     this.setState({pageLoading: false});
+    this.props.done();
+
   }
 
   render(){
@@ -67,8 +69,6 @@ class LoginForm extends React.Component {
 
     return (
       <div id="main">
-        {this.state.pageLoading ? <PageLoader/> : ""}
-
         <Row type="flex" style={divLogin}>
           <Col xs={{ span: 24}} lg={{ span: 13}}>
             <div style={{backgroundColor: "#424242",  height: '100%'}}></div>
@@ -82,20 +82,14 @@ class LoginForm extends React.Component {
                   <Title>TITLE LOREM IPSUM</Title>
                 )}
 
-                {this.props.loading && (
-                  <Row type="flex" align="middle" justify="center">
-                    <Spin size="large" className="login-form"
-                          tip="Carregando..."></Spin>
-                  </Row>
-                )}
+                <ContainerLoader condition={this.props.loading}/>
 
-                {!this.props.loading && (
-                  <Form onSubmit={this.loginClick} className="login-form">
+                  <Form style={{display: (!this.props.loading ? 'block' : 'none')}} onSubmit={this.loginClick} className="login-form">
                     <Form.Item>
                       {getFieldDecorator('email', {
                         rules: [{ required: true, message: 'Insira o seu usuário ou e-mail!' }],
                       })(
-                        <Input
+                        <Input autoFocus
                           prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                           placeholder="E-mail"
                         />,
@@ -118,7 +112,6 @@ class LoginForm extends React.Component {
                       </Button>
                     </Form.Item>
                   </Form>
-                )}
               </Col>
             </Row>
           </Col>
@@ -129,13 +122,19 @@ class LoginForm extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {loading: state.loading, profile: state.profile}
+  state.email = state.profile ? state.profile.email : "";
+  state.password = state.profile ? state.profile.password  : "";
+
+  return {...state, loading: state.loading, profile: state.profile}
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     login : (mail, password) => {
       dispatch(LoginApi.login(mail, password));
+    },
+    done : () => {
+      dispatch(loginDone({}));
     }
   }
 };
