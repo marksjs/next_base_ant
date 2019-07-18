@@ -1,4 +1,7 @@
 import React from 'react';
+import {loginError} from "../store/actions/actionLogin";
+
+import { connect } from "react-redux";
 import { PageLoader } from "../components/Loading/PageLoader";
 import {getLoginInfo, logout} from '../utils/auth';
 import Router from "next/router";
@@ -6,7 +9,7 @@ import {apiUrl} from "../config/ApiConfig";
 import {Flash} from "../components/Flash";
 import axios from "axios/index";
 
-export default class Logout extends React.Component{
+class Logout extends React.Component{
 
   componentDidMount(){
     const body = {};
@@ -27,7 +30,11 @@ export default class Logout extends React.Component{
 
   render(){
     return (
-       <PageLoader/>
+      <PageLoader/>
     );
   }
 }
+
+
+
+export default connect()(Logout);
