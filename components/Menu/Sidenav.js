@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Layout, Menu, Icon, Button, Divider } from 'antd';
-
 const { SubMenu } = Menu;
 const { Header, Content,  Footer, Sider } = Layout;
 
@@ -9,6 +8,22 @@ export class Sidenav extends Component {
     theme: 'dark',
     current: '1',
     collapsed: false
+  };
+
+  updateDimensions = async () => {
+    this.setState({width: window.innerWidth, height: window.innerHeight});
+  };
+
+  componentWillMount() {
+    this.updateDimensions();
+  };
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
   };
 
   onCollapse = collapsed => {
@@ -30,66 +45,10 @@ export class Sidenav extends Component {
   };
 
   render() {
-
-      let bulbTheme = '';
-    let buttonTheme = {
-      left: '20px',
-      bottom: '12px',
-      position: 'fixed'
-    };
-
-    if(this.state.theme === 'dark'){
-      buttonTheme.backgroundColor = 'transparent';
-      buttonTheme.color = 'rgb(255, 255, 255)';
-      buttonTheme.borderColor = '#d9d9d9';
-      buttonTheme.borderStyle = 'dashed';
-
-      bulbTheme = '';
-    } else {
-      buttonTheme = {
-        left: '20px',
-        bottom: '12px',
-        position: 'fixed'
-      }
-
-      bulbTheme = 'filled';
-    }
-
-    let siderTheme = {
-      overflow: 'auto',
-      height: '100vh',
-      position: 'fixed',
-      left: 0,
-    };
-
-    let menuToolsContainer = {
-      padding: '24px 0px 12px',
-      position: 'absolute',
-      height: '10%'
-    };
-
-    let userInfoContainer = {
-      minHeight: '100px',
-      textAlign: 'center',
-      width: '100%',
-      padding: '12px'
-    };
-
-    let userPic = {
-      display: 'inline-block',
-      width: '60px',
-      height: '60px',
-      borderRadius: '50%',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center center',
-      backgroundSize: 'cover',
-      backgroundImage: "url('http://placehold.it/50x50')"
-    }
-
     return (
-      <Sider theme={this.state.theme} collapsed={this.state.collapsed} onCollapse={this.onCollapse} style={siderTheme}>
-        <div style={userInfoContainer}>
-          <div style={userPic}></div>
+      <Sider className="sider" theme={this.state.theme} collapsed={this.state.width <= 1012 ? true : false} onCollapse={this.onCollapse}>
+        <div className="userInfoContainer">
+          <div className="userpic"></div>
           <h3 style={{color: (this.state.theme === 'dark' ? '#fafafa' : 'rgba(0, 0, 0, 0.65)')}}>Admin Panel</h3>
         </div>
         <Menu theme={this.state.theme} defaultSelectedKeys={['1']} mode="inline">
@@ -130,8 +89,11 @@ export class Sidenav extends Component {
             <span>File</span>
           </Menu.Item>
         </Menu>
-        <div style={menuToolsContainer}>
-          <Button onClick={this.changeTheme} style={buttonTheme} shape="circle" type="solid">
+        <div className="menuToolsContainer">
+          <Button onClick={this.changeTheme}
+                  className={this.state.theme === 'dark' ? 'btn-theme dark' : 'btn-theme light'}
+                  shape="circle"
+                  type="solid">
             <Icon type="bulb" theme="filled"/>
           </Button>
         </div>

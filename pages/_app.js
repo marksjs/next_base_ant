@@ -1,5 +1,6 @@
 // pages/_app.js
 import React from "react";
+import "../components/components.scss";
 import {Provider} from "react-redux";
 import App, {Container} from "next/app";
 import withRedux from "next-redux-wrapper";

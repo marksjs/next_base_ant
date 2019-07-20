@@ -1,0 +1,49 @@
+.sider{
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+
+  .userInfoContainer{
+    min-height: 100px;
+    text-align: center;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .userpic{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-image: url('http://placehold.it/50x50');
+  }
+
+  .menuToolsContainer{
+    padding: 24px 0px 12px;
+    position: absolute;
+    height: 10%;
+  }
+
+  .btn-theme {
+    left: 20px;
+    bottom: 12px;
+    position: fixed;
+
+    &.dark {
+      background-color: transparent;
+      color: rgb(255, 255, 255);
+      border-color: #d9d9d9;
+      border-style: dashed;
+    }
+
+    &.light{
+      left: 20px;
+      bottom: 12px;
+      position: fixed;
+    }
+  }
+}
