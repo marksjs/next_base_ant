@@ -9,11 +9,19 @@ export const login = async (header) => {
   cookie.set('token', header.token);
   cookie.set('uid', header.uid);
   cookie.set('client', header.client);
+
+  localStorage["username"] = header.name; 
+  localStorage["profile"] = header.profile; 
+
   Router.push('/dashboard')
 }
 
 export const getLoginInfo = () =>{
   return {"token": cookie.get('token'), "uid": cookie.get('uid'), "client": cookie.get('client')}
+};
+
+export const getSessionInfo = () =>{
+  return {"access-token": cookie.get('token'), "uid": cookie.get('uid'), "client": cookie.get('client')}
 };
 
 export const logout = () => {

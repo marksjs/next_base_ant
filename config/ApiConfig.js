@@ -1,1 +1,1 @@
-export const apiUrl = 'http://cipaapi.velow.com.br';
+export const apiUrl = 'https://testapi.io/api/marksjs';

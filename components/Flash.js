@@ -11,10 +11,14 @@ export class Flash extends React.Component {
       timer: 3000
     });
 
-    return Toast.fire({
-      type: type,
-      title: messages.join('\n *')
-    });
-  }
 
+    try{
+      return Toast.fire({
+        type: type,
+        title: messages.join('\n *')
+      });
+    } catch(e) {
+      throw new Error("Failed to generate Flash message: "+e);
+    }
+  }
 }

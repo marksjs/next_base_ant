@@ -6,9 +6,11 @@ import App, {Container} from "next/app";
 import withRedux from "next-redux-wrapper";
 import makeStore from '../store';
 import {Sidenav} from '../components/Menu/Sidenav';
+import { useRouter } from 'next/router'
+
+
 import 'antd/dist/antd.css';
 import { Layout } from 'antd';
-import { useRouter } from 'next/router'
 
 const { Header, Content, Footer } = Layout;
 
@@ -26,6 +28,7 @@ class MyApp extends App {
 
   render() {
     const {Component, pageProps, store} = this.props;
+    const arrBreadcrumb = this.props.router.asPath.split('/').filter(chr => chr != '');
 
     const containerProvider = <Container>
       <Provider store={store}>
@@ -33,14 +36,15 @@ class MyApp extends App {
       </Provider>
     </Container>;
 
-    const sidenavWithContainerProvider =   <Layout>
+    const sidenavWithContainerProvider =   
+    <Layout className="content">
       <Sidenav/>
-      <Layout style={{ marginLeft: 200 }}>
+      <Layout>
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{ padding: 24, background: '#fff', textAlign: 'center' }}>
+          <div>
             <Container>
               <Provider store={store}>
-                <Component {...pageProps} />
+                <Component query={this.props.router.query} currentRoute={this.props.router.asPath} path={arrBreadcrumb} {...pageProps} />
               </Provider>
             </Container>
           </div>
@@ -48,9 +52,9 @@ class MyApp extends App {
       </Layout>
     </Layout>;
     return (
-      <main>
+      <div>
         {this.props.router.asPath.includes('/login') || this.props.router.asPath.includes('/logout') ?  (containerProvider) : (sidenavWithContainerProvider)}
-      </main>
+      </div>
     );
   }
 
