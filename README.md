@@ -17,6 +17,7 @@ Requirements:
 
  1- git clone https://github.com/mrviniciux/next_base_ant.git <br>
  2- cd next_base_ant <br>
+ 3- yarn <br>
  3- yarn dev
 
 Starts on localhost:3000
