@@ -28,3 +28,9 @@ Starts on localhost:3000
 2- yarn start &
 
 You can change the port on package.json file or set environment var. 
+
+
+##TODO
+
+* Create a NodeJS api base to integrate with next_base;
+* Component tests; 
