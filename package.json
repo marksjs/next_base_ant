@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start -p %PORT%"
+    "start": "next start -p %PORT%",
+    "test": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
@@ -28,5 +30,13 @@
     "redux-thunk": "^2.3.0",
     "sweetalert2": "^8.12.0",
     "sweetalert2-react-content": "^1.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@testing-library/jest-dom": "^5.5.0",
+    "@testing-library/react": "^10.0.3",
+    "@types/jest": "^25.2.1",
+    "babel-jest": "^25.5.1",
+    "jest": "^25.5.1"
   }
 }
